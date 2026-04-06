@@ -1,0 +1,46 @@
+# Render.com deployment config
+# Free tier: 750 hours/month, auto-sleep after 15 min inactivity
+services:
+  - type: web
+    name: clinic-api
+    runtime: node
+    region: frankfurt
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: node dist/main.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: APP_PORT
+        value: "3000"
+      - key: DB_HOST
+        fromDatabase:
+          name: clinic-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: clinic-db
+          property: port
+      - key: DB_USERNAME
+        fromDatabase:
+          name: clinic-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: clinic-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: clinic-db
+          property: database
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        value: "https://your-app.vercel.app"
+
+databases:
+  - name: clinic-db
+    plan: free
+    region: frankfurt

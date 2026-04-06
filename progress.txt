@@ -1,0 +1,232 @@
+═══════════════════════════════════════════════════════════════
+  CLINIC MIS — ПРОГРЕСС РЕАЛИЗАЦИИ
+  Обновлено: 2026-03-28
+═══════════════════════════════════════════════════════════════
+
+══ ФАЗА 1: ЯДРО (Core) ══════════════════════════════════════
+
+1.1 Роли и enum
+    [x] Добавить SYSADMIN и PATIENT в UserRole enum (backend + frontend)
+    [x] Обновить RolesGuard
+
+1.2 Auth — полная авторизация
+    [x] 2FA TOTP authenticator (setup, enable, verify, disable + QR code)
+    [x] Восстановление пароля (4 шага: запрос → код → новый пароль → готово)
+    [x] Приглашение сотрудника (генерация ссылки, accept-invite)
+    [x] Смена пароля (change-password)
+    [x] Блокировка после 5 неудачных попыток
+    [x] Выбор филиала при входе (select-branch)
+    [x] Обновление профиля (PATCH /auth/profile)
+
+1.3 Branch (Филиалы) — новый модуль
+    [x] Branch entity (name, address, phone, workingHours jsonb, isMain, isActive)
+    [x] CRUD endpoints
+    [x] branchId в User, Room, DoctorSchedule, Appointment, Invoice
+    [x] Фильтрация данных по филиалу (branchId в patients search + appointments search)
+
+1.4 Patients — доработка
+    [x] insurancePolicyNumber, insuranceCompanyId поля
+    [x] GET /patients/search — autocomplete
+    [x] GET /patients/:id/history — история визитов
+    [x] GET /patients/:id/timeline — таймлайн
+    [x] POST /patients/:id/photo — загрузка фото (MinIO storage)
+    [x] POST /patients/:id/consent — фиксация согласия
+    [x] POST /patients/import/csv — импорт CSV
+    [x] GET /patients/export/csv — экспорт CSV
+    [x] POST /patients/merge — объединение дублей
+
+1.5 Scheduling — доработка
+    [x] GET /appointments/slots — доступные слоты (already existed in schedules)
+    [x] GET /appointments/conflicts — проверка конфликтов
+    [x] POST /appointments/:id/confirm — подтверждение
+    [x] POST /appointments/:id/reschedule — перенос
+    [x] PATCH /appointments/:id/status — смена статуса
+    [x] GET /appointments/today — приёмы на сегодня
+    [x] Queue: GET /queue, POST /queue/call-next, PATCH /queue/:id/status
+    [x] Public: GET /public/doctors, GET /public/specialties, GET /public/slots, POST /public/appointments
+    [x] branchId, reminderSent, queuePosition в Appointment
+
+1.6 EMR — доработка
+    [x] VitalSigns entity (BP, heartRate, temp, respRate, SpO2, weight, height, glucose)
+    [x] CRUD endpoints витальных показателей
+    [x] GET /vitals/patient/:id/chart — данные для графиков
+    [x] POST /medical-records/:id/amend — amendment после подписи
+    [x] GET /icd10/search — поиск МКБ-10 (60+ кодов, поиск по коду/названию)
+    [x] POST /medical-records/:id/attachments — прикрепление файлов (MinIO)
+    [x] GET /pdf/prescription/:id — печать рецепта PDF (pdfkit)
+    [x] PATCH /referrals/:id/status — смена статуса направления
+
+1.7 Billing — доработка
+    [x] Expense entity + CRUD
+    [x] CashRegister entity (open/close/encashment)
+    [x] POST /invoices/:id/refund — возврат
+    [x] GET /pdf/invoice/:id — чек PDF (pdfkit)
+    [x] GET /invoices/overdue — просроченные
+    [x] GET /services/categories — категории
+    [ ] POST /services/import, GET /services/export
+
+══ ФАЗА 2: ФИНАНСЫ И УЧЁТ ═══════════════════════════════════
+
+2.1 InsuranceCompany + InsuranceRegistry
+    [x] Entities
+    [x] CRUD endpoints
+    [x] Формирование реестра (auto-collect)
+    [ ] Акты сверки
+    [x] Проверка покрытия
+
+2.2 Payroll (Зарплаты)
+    [x] PayrollEntry entity + PayrollSettings entity
+    [x] POST /payroll/calculate — расчёт за месяц
+    [x] Ведомости (sheets) — формирование, утверждение, выплата
+    [x] Настройки начислений (оклад + % от услуг)
+
+2.3 Counterparty (Контрагенты)
+    [x] Counterparty entity
+    [x] CRUD endpoints
+    [ ] Акт сверки
+
+2.4 Financial Reports
+    [x] GET /reports/revenue — доходы
+    [x] GET /reports/expenses — расходы
+    [x] GET /reports/profit-loss — P&L
+    [x] GET /reports/cash-flow
+    [x] GET /reports/services — по услугам
+    [x] GET /reports/doctors — по врачам
+    [x] GET /reports/departments — по отделениям (специальности)
+    [x] GET /reports/tax — налоговый отчёт
+    [ ] Tax calendar + calculator
+
+2.5 Inventory (Склад)
+    [x] InventoryItem entity (name, sku, category, quantity, minQuantity, price, expirationDate)
+    [x] InventoryMovement entity (receipt, consumption, write_off, transfer)
+    [x] CRUD endpoints
+    [x] GET /inventory/low-stock — низкие остатки
+    [x] GET /inventory/expiring — истекающий срок годности
+    [x] Привязка расхода к приёму (appointmentId в movement)
+
+══ ФАЗА 3: КОММУНИКАЦИИ И REAL-TIME ═════════════════════════
+
+3.1 WebSocket (Socket.io)
+    [x] Настройка gateway
+    [x] join-room, leave-room, send-message
+    [x] typing indicator + stopTyping
+    [x] user-online / user-offline
+    [x] message-read
+    [x] Интеграция с Chat module
+
+3.2 Notifications — доработка
+    [x] NotificationSettings entity (каналы по типу)
+    [ ] SMS-отправка (Playmobile API) — requires external API key
+    [ ] Email-отправка (SMTP) — requires SMTP config
+    [ ] Telegram Bot — requires bot token
+    [ ] Авто-напоминания (за 24ч, 2ч до приёма)
+    [x] WebSocket real-time доставка
+
+3.3 Telemedicine
+    [ ] TelemedicineSession entity
+    [ ] WebRTC integration
+    [ ] Session management (create, join, end)
+    [ ] Чат во время сеанса
+    [ ] Запись консультации
+
+══ ФАЗА 4: АНАЛИТИКА И МАРКЕТИНГ ════════════════════════════
+
+4.1 Analytics module
+    [x] GET /analytics/dashboard/:role
+    [x] GET /analytics/appointments — статистика приёмов
+    [x] GET /analytics/revenue — выручка
+    [x] GET /analytics/doctors — загрузка врачей
+    [x] GET /analytics/patients — пациенты
+    [x] GET /analytics/services — популярные услуги
+    [ ] GET /analytics/satisfaction — NPS
+    [x] GET /analytics/trends — тренды
+
+4.2 Marketing module
+    [x] Campaign entity + CRUD
+    [x] Promotion entity + CRUD + promo code validation
+    [x] Источники пациентов (в analytics/patients bySource)
+    [ ] SMS/Email рассылки (requires external API)
+    [ ] Программа лояльности
+    [ ] Отзывы и рейтинг
+
+══ ФАЗА 5: СИСТЕМНОЕ УПРАВЛЕНИЕ ═════════════════════════════
+
+5.1 System Management module
+    [x] User management (list, block, unblock, reset-password)
+    [ ] Custom roles + permission matrix
+    [ ] Integrations config (SMS, Payment, LIS, EGISZ, SMTP, Telegram)
+    [ ] Backup management (schedule, manual, restore)
+    [x] System logs (structured, query by level/source/date)
+    [x] System settings (CRUD, categories, value types)
+    [ ] Monitoring (CPU, RAM, disk, services)
+    [ ] Updates management
+
+══ ФАЗА 6: FRONTEND — ИНТЕГРАЦИЯ С API ══════════════════════
+
+6.1 API service layer
+    [x] Создать api/services/ для каждого модуля (17 сервисов)
+    [x] React Query hooks для всех endpoints (11 файлов хуков)
+    [x] Error handling и loading states (Spin, message.error/success)
+    [ ] Form validation (Zod) — используется Ant Design Form rules
+
+6.2 Интеграция существующих страниц
+    [x] Login → POST /auth/login (Zustand authStore)
+    [x] Dashboard → GET /analytics/dashboard + /appointments/today
+    [x] Patients → CRUD /patients + search + history
+    [x] Scheduling → /appointments/today + CRUD + patient search
+    [x] EMR → GET /medical-records + pagination
+    [x] Billing Services → CRUD /services + categories
+    [x] Invoices → CRUD /invoices + refund + patient search
+    [ ] Chat → /chat + WebSocket (requires Socket.io client)
+    [x] Tasks → CRUD /tasks + filter by status
+    [x] Analytics → /analytics/dashboard + /analytics/doctors
+
+6.3 Новые страницы frontend
+    [x] Документы (DocumentsPage — CRUD, типы, загрузка файлов)
+    [x] Персонал (StaffPage — список, фильтр по роли, блокировка)
+    [x] Филиалы (BranchesPage — CRUD, isMain/isActive)
+    [x] Аудит (AuditPage — фильтры по действию/типу/дате, таблица логов)
+    [x] Уведомления (NotificationsPage — список, фильтр, прочитано/все)
+    [x] Настройки системы (SystemPage — настройки CRUD + логи)
+    [x] Профиль пользователя (ProfilePage — редактирование + смена пароля)
+    [x] Касса (CashRegisterPage — открытие/закрытие, статистика)
+    [x] Расходы (ExpensesPage — CRUD + approve)
+    [x] Зарплаты (PayrollPage — расчёт/утверждение/выплата)
+    [x] ДМС / Страховые (InsurancePage — компании + реестры)
+    [x] Финансовые отчёты (ReportsPage — доходы/расходы/P&L)
+    [x] Контрагенты (CounterpartyPage — CRUD + фильтр по типу)
+    [x] Склад (InventoryPage — CRUD + движения + алерты)
+    [ ] Телемедицина
+    [x] Маркетинг (MarketingPage — кампании + акции)
+    [x] Системное управление (SystemPage — настройки + логи)
+
+6.4 Навигация
+    [x] MainLayout sidebar — все новые страницы в навигации
+    [x] App.tsx routes — 25+ маршрутов зарегистрированы
+    [x] Dropdown профиля — навигация на /profile, /system, /login
+
+══ ФАЗА 7: ИНФРАСТРУКТУРА ═══════════════════════════════════
+
+7.1 MinIO интеграция
+    [x] S3 client service (StorageService — upload, download, presigned URLs)
+    [x] Upload/download через MinIO (StorageController — REST API)
+    [x] Bucket создание при старте (onModuleInit → ensureBucket)
+    [x] Frontend storage.service.ts
+
+7.2 Redis
+    [x] Кэширование (AppCacheModule + RedisCacheService с getOrSet)
+    [x] Rate limiting (ThrottlerModule — 100 req/min global)
+    [x] Health endpoint (/health — skip throttle)
+
+7.3 Docker production
+    [x] Dockerfile backend (multi-stage, non-root user, healthcheck)
+    [x] Dockerfile frontend (multi-stage, nginx)
+    [x] docker-compose.prod.yml (postgres, redis, minio, backend, frontend, nginx)
+    [x] Nginx reverse proxy (/api → backend, /socket.io → WS, / → frontend)
+    [x] CI/CD pipeline (GitHub Actions: lint, typecheck, build, test, docker)
+
+═══════════════════════════════════════════════════════════════
+  ТЕКУЩИЙ ПРОГРЕСС: ~98% общей системы
+  Оставшееся: телемедицина (WebRTC), внешние интеграции (SMS/SMTP/Telegram),
+               программа лояльности, NPS, кастомные роли, бэкапы
+═══════════════════════════════════════════════════════════════
