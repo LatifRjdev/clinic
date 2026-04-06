@@ -6,17 +6,25 @@ import * as dotenv from 'dotenv';
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
 // ==================== CONFIG ====================
-const dataSource = new DataSource({
+const dbConfig: any = {
   type: 'postgres',
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '5432', 10),
-  username: process.env.DB_USERNAME || 'clinic_user',
-  password: process.env.DB_PASSWORD || 'clinic_password',
-  database: process.env.DB_NAME || 'clinic_db',
   synchronize: true,
   entities: [path.join(__dirname, '../modules/**/entities/*.entity{.ts,.js}')],
   logging: false,
-});
+};
+
+if (process.env.DATABASE_URL) {
+  dbConfig.url = process.env.DATABASE_URL;
+  dbConfig.ssl = process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false;
+} else {
+  dbConfig.host = process.env.DB_HOST || 'localhost';
+  dbConfig.port = parseInt(process.env.DB_PORT || '5432', 10);
+  dbConfig.username = process.env.DB_USERNAME || 'clinic_user';
+  dbConfig.password = process.env.DB_PASSWORD || 'clinic_password';
+  dbConfig.database = process.env.DB_NAME || 'clinic_db';
+}
+
+const dataSource = new DataSource(dbConfig);
 
 async function seed() {
   await dataSource.initialize();

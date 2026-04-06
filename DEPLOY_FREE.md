@@ -24,11 +24,6 @@
                   │    Neon     │           │   Upstash   │
                   │ PostgreSQL  │           │    Redis    │
                   └─────────────┘           └─────────────┘
-                                      │
-                                      ▼
-                             ┌──────────────────┐
-                             │ Cloudflare R2    │  (файлы, S3-совместимое)
-                             └──────────────────┘
 ```
 
 | Сервис | Назначение | Бесплатный лимит |
@@ -37,7 +32,7 @@
 | **Render.com** | Backend (NestJS + WebSocket) | 750 часов/месяц, 512 MB RAM |
 | **Neon.tech** | PostgreSQL | 0.5 GB, serverless |
 | **Upstash** | Redis | 10 000 команд/день, 256 MB |
-| **Cloudflare R2** | Хранилище файлов | 10 GB, 1 млн запросов/мес |
+| — | Хранилище файлов | Пропускаем для демо (не нужно) |
 | **UptimeRobot** | Защита от засыпания Render | Бесплатно, ping каждые 5 мин |
 
 ---
@@ -68,7 +63,6 @@ git push -u origin main
 - https://render.com
 - https://neon.tech
 - https://upstash.com
-- https://dash.cloudflare.com
 - https://uptimerobot.com
 
 ---
@@ -118,25 +112,13 @@ git push -u origin main
 
 ---
 
-## Шаг 3. Хранилище файлов — Cloudflare R2
+## Шаг 3. Хранилище файлов — ПРОПУСКАЕМ для демо
 
-1. Зайди на https://dash.cloudflare.com
-2. В левом меню выбери **R2 Object Storage**
-3. Нажми **Create bucket**
-   - **Name:** `clinic-files`
-   - **Location:** Automatic
-4. Нажми **Create**
+Для демонстрации хранилище файлов **не нужно**. Система работает полностью без него — просто не будут работать загрузка фото пациентов и прикрепление документов. Все остальные функции (запись, ЭМК, касса, финансы, аналитика, чат) работают.
 
-5. Открой вкладку **Manage R2 API Tokens**
-6. Нажми **Create API Token**
-   - **Permissions:** Object Read & Write
-   - **Bucket:** clinic-files
-7. Сохрани:
-   - **Access Key ID**
-   - **Secret Access Key**
-   - **Endpoint** (выглядит как `https://xxxxx.r2.cloudflarestorage.com`)
+**Не добавляй** переменные `S3_*` в Render — backend автоматически пропустит подключение к хранилищу.
 
-**Альтернатива проще:** если R2 вызывает сложности, используй MinIO на самом Render (один дополнительный сервис), но это съест часть бесплатных часов.
+Когда клиент утвердит проект и перейдёт на production-сервер — хранилище будет через встроенный MinIO в Docker (см. DEPLOY_PRODUCTION.md).
 
 ---
 
@@ -153,7 +135,7 @@ git push -u origin main
    - **Branch:** `main`
    - **Root Directory:** `backend`
    - **Runtime:** Node
-   - **Build Command:** `npm ci && npm run build`
+   - **Build Command:** `npm ci --include=dev && npm run build`
    - **Start Command:** `node dist/main.js`
    - **Instance Type:** **Free**
 
@@ -166,12 +148,8 @@ NODE_ENV=production
 APP_PORT=3000
 APP_ENV=production
 
-# База данных (из Шага 1)
-DB_HOST=ep-xxx.eu-central-1.aws.neon.tech
-DB_PORT=5432
-DB_USERNAME=username
-DB_PASSWORD=password_from_neon
-DB_NAME=neondb
+# База данных (из Шага 1) — одна строка из Neon dashboard
+DATABASE_URL=postgresql://username:password@ep-xxx.eu-central-1.aws.neon.tech/neondb?sslmode=require
 DB_SSL=true
 
 # Redis (из Шага 2)
@@ -189,27 +167,34 @@ JWT_REFRESH_EXPIRES_IN=7d
 # Frontend URL (добавишь после Шага 5)
 FRONTEND_URL=https://clinic-frontend.vercel.app
 
-# Cloudflare R2 (из Шага 3)
-S3_ENDPOINT=https://xxxxx.r2.cloudflarestorage.com
-S3_PORT=443
-S3_ACCESS_KEY=access_key_from_r2
-S3_SECRET_KEY=secret_key_from_r2
-S3_BUCKET=clinic-files
-S3_REGION=auto
+# Хранилище файлов — пропускаем для демо (фото и документы не будут загружаться)
+# S3_ENDPOINT, S3_ACCESS_KEY и т.д. — НЕ нужны для демо
 ```
 
-### 4.3. Настройка БД и сидинг
+### 4.3. Заполнение БД тестовыми данными (seed)
 
-После первого успешного деплоя нужно создать таблицы и заполнить тестовыми данными.
+На бесплатном плане Render Shell недоступен, поэтому seed запускаем через Build Command.
 
-В Render открой **Shell** (вкладка на странице сервиса):
+**При первом деплое** временно измени Build Command:
+
+```
+npm ci --include=dev && npm run build && node dist/seeds/seed.js
+```
+
+После успешного деплоя (когда в логах увидишь `Seed completed!`) **верни обратно**:
+
+```
+npm ci --include=dev && npm run build
+```
+
+Это нужно чтобы seed не запускался при каждом деплое и не затирал данные.
+
+**Альтернатива:** запусти seed локально со своего компьютера, указав Neon DATABASE_URL:
 
 ```bash
-# Создание таблиц + тестовые данные
-npm run seed
+cd backend
+DATABASE_URL="postgresql://user:pass@ep-xxx.neon.tech/neondb?sslmode=require" DB_SSL=true npm run seed
 ```
-
-Если `synchronize: true` в TypeORM, таблицы создадутся автоматически при первом запуске. Seed запускается отдельно.
 
 ### 4.4. Деплой
 
@@ -331,7 +316,7 @@ git push
 | **Render засыпает** | Первый запрос после 15 мин простоя — 30-50 секунд (решается UptimeRobot) |
 | **Neon 0.5 GB** | ~10 000-50 000 записей пациентов с историей |
 | **Upstash 10k команд/день** | Достаточно для 5-20 активных пользователей |
-| **R2 10 GB** | ~20 000 фото пациентов или 5 000 PDF |
+| **Нет хранилища файлов** | Фото и документы не загружаются — всё остальное работает |
 | **Нет SMS/Email** | Нужны отдельные API-ключи (Twilio, SendGrid) |
 | **Нет резервных копий** | Neon делает авто-snapshots, но лучше подключить свои |
 
@@ -372,7 +357,6 @@ git push
 | Render (Backend) | **0 сомони** |
 | Neon (PostgreSQL) | **0 сомони** |
 | Upstash (Redis) | **0 сомони** |
-| Cloudflare R2 | **0 сомони** |
 | UptimeRobot | **0 сомони** |
 | **ИТОГО** | **0 сомони/месяц** |
 
