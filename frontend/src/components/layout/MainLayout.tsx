@@ -6,7 +6,6 @@ import {
   DashboardOutlined,
   TeamOutlined,
   CalendarOutlined,
-  FileTextOutlined,
   DollarOutlined,
   FolderOutlined,
   MessageOutlined,
@@ -27,8 +26,6 @@ import {
   SafetyOutlined,
   ShopOutlined,
   NotificationOutlined,
-  AppstoreOutlined,
-  FileProtectOutlined,
   ContainerOutlined,
   PieChartOutlined,
   VideoCameraOutlined,
@@ -188,7 +185,7 @@ const MainLayout: React.FC = () => {
   const [searchResults, setSearchResults] = useState<{ type: string; label: string; path: string }[]>([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const searchInputRef = useRef<any>(null);
-  const searchTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const switchLang = (l: 'RU' | 'TJ' | 'EN') => {
     setLang(l);

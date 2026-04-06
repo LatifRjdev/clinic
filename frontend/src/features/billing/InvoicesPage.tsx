@@ -182,7 +182,7 @@ const InvoicesPage: React.FC = () => {
       title: t('scheduling.patient'),
       key: 'patient',
       render: (_: unknown, record: Invoice) => {
-        const p = (record as Record<string, unknown>).patient as { firstName?: string; lastName?: string } | undefined;
+        const p = (record as unknown as Record<string, unknown>).patient as { firstName?: string; lastName?: string } | undefined;
         const name = p ? `${p.lastName || ''} ${p.firstName || ''}`.trim() : record.patientId?.slice(0, 8) + '...';
         return (
           <Space>
@@ -371,7 +371,7 @@ const InvoicesPage: React.FC = () => {
             />
           </Form.Item>
 
-          <Divider orientation="left" style={{ fontSize: 13 }}>{t('billing.invoiceServices')}</Divider>
+          <Divider titlePlacement="left" style={{ fontSize: 13 }}>{t('billing.invoiceServices')}</Divider>
 
           {invoiceItems.map((item, index) => (
             <Row gutter={8} key={index} align="middle" style={{ marginBottom: 8 }}>

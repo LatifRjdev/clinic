@@ -7,7 +7,7 @@ import type { InventoryItem } from '../../../types';
 
 const LowStockWidget: React.FC = () => {
   const { t } = useTranslation();
-  const { data } = useLowStock();
+  const { data } = useLowStock() as { data: InventoryItem[] | { data: InventoryItem[] } | undefined };
   const navigate = useNavigate();
 
   const items: InventoryItem[] = Array.isArray(data) ? data : data?.data || [];

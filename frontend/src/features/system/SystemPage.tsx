@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Table, Tabs, Input, Select, Row, Col, Tag, Button, Modal, Form, message } from 'antd';
-import { SettingOutlined, SearchOutlined, PlusOutlined } from '@ant-design/icons';
+import { SettingOutlined, PlusOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useSystemSettings, useSystemLogs, useUpsertSetting, useDeleteSetting } from '../../hooks/useSystem';
-import type { SystemSettings, SystemLog } from '../../types';
+import type { SystemSettings } from '../../types';
 
 const levelColors: Record<string, string> = { info: 'blue', warning: 'orange', error: 'red', critical: 'volcano' };
 

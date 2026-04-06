@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import {
-  Calendar, Badge, Select, Spin, Tooltip, Drawer, Tag, Button, Space, Segmented, message,
+  Calendar, Badge, Select, Spin, Tooltip, Drawer, Tag, Button, Segmented, message,
 } from 'antd';
 import {
   LeftOutlined, RightOutlined, CalendarOutlined,
@@ -504,7 +504,7 @@ const CalendarPage: React.FC = () => {
                     borderTop: '1px solid var(--gray-50)',
                   }}>
                     {/* confirm */}
-                    {apt.status === 'waiting_confirmation' && (
+                    {apt.status === 'scheduled' && (
                       <Button
                         size="small" type="primary"
                         icon={<CheckOutlined />}

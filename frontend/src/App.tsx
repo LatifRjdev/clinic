@@ -9,7 +9,7 @@ import LoginPage from './features/auth/LoginPage';
 import DashboardPage from './features/dashboard/DashboardPage';
 import PatientsPage from './features/patients/PatientsPage';
 import SchedulingPage from './features/scheduling/SchedulingPage';
-import EmrPage from './features/emr/EMRPage';
+import EmrPage from './features/emr/EmrPage';
 import BillingServicesPage from './features/billing/BillingServicesPage';
 import InvoicesPage from './features/billing/InvoicesPage';
 import ChatPage from './features/chat/ChatPage';

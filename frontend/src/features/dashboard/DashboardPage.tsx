@@ -1,6 +1,5 @@
 import React from 'react';
 import { Row, Col, Spin } from 'antd';
-import { useTranslation } from 'react-i18next';
 import { useDashboard } from '../../hooks';
 import { useAuthStore } from '../../store/authStore';
 

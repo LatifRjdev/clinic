@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Table, Button, Modal, Form, Input, InputNumber, DatePicker, Row, Col, Tag, Tabs, Space, Tooltip, message } from 'antd';
+import { Table, Button, Modal, Form, Input, InputNumber, DatePicker, Row, Col, Tag, Tabs, message } from 'antd';
 import { PlusOutlined, EditOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { insuranceService } from '../../api/services/insurance.service';

@@ -1,10 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { chatService } from '../api/services/chat.service';
 
-export const useChatRooms = () =>
+export const useChatRooms = (userId: string) =>
   useQuery({
-    queryKey: ['chat', 'rooms'],
-    queryFn: () => chatService.getRooms(),
+    queryKey: ['chat', 'rooms', userId],
+    queryFn: () => chatService.getRooms(userId),
+    enabled: !!userId,
   });
 
 export const useChatMessages = (roomId: string, params?: { page?: number; limit?: number }) =>
@@ -17,7 +18,7 @@ export const useChatMessages = (roomId: string, params?: { page?: number; limit?
 export const useCreateChatRoom = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: { name?: string; type: string; participantIds: string[] }) =>
+    mutationFn: (data: { name?: string; type: string; memberIds: string[] }) =>
       chatService.createRoom(data),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['chat', 'rooms'] }),
   });
@@ -26,7 +27,7 @@ export const useCreateChatRoom = () => {
 export const useMarkAllAsRead = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (roomId: string) => chatService.markAllAsRead(roomId),
+    mutationFn: ({ roomId, userId }: { roomId: string; userId: string }) => chatService.markAllAsRead(roomId, userId),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['chat'] }),
   });
 };

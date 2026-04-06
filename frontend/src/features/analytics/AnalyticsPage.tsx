@@ -1,8 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Table, Row, Col, Avatar, DatePicker, Space, Spin, Progress } from 'antd';
 import {
-  ArrowUpOutlined,
-  ArrowDownOutlined,
   TeamOutlined,
   DollarOutlined,
   CalendarOutlined,

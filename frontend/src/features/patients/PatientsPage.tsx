@@ -73,7 +73,7 @@ const PatientsPage: React.FC = () => {
   const { t } = useTranslation();
   const [searchText, setSearchText] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
-  const searchTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const searchTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
@@ -166,8 +166,8 @@ const PatientsPage: React.FC = () => {
     };
 
     // Duplicate check for new patients only
-    if (!editingPatient && payload.phone) {
-      const phone = String(payload.phone).trim();
+    if (!editingPatient && (payload as Record<string, unknown>).phone) {
+      const phone = String((payload as Record<string, unknown>).phone).trim();
       if (phone.length >= 2) {
         // Search existing patients by phone
         const matchingPatients = (dupSearchResults || []).filter(
@@ -270,7 +270,7 @@ const PatientsPage: React.FC = () => {
     const csvRows = patients.map((p: Patient) =>
       csvHeaders
         .map((h) => {
-          const val = String((p as Record<string, unknown>)[h] || '');
+          const val = String((p as unknown as Record<string, unknown>)[h] || '');
           return val.includes(',') || val.includes(';') || val.includes('"')
             ? `"${val.replace(/"/g, '""')}"`
             : val;
@@ -1085,7 +1085,7 @@ const PatientDrawerContent: React.FC<{ patient: Patient; t: (key: string, option
 
   const appointments: Appointment[] = Array.isArray(history) ? history : [];
 
-  const historyItems = appointments.map((apt: Appointment, i: number) => {
+  const historyItems = appointments.map((apt: Appointment, _i: number) => {
     const doctorName = apt.doctor
       ? `${apt.doctor.lastName} ${apt.doctor.firstName}`
       : '';

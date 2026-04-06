@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Table, Button, Modal, Form, Input, Select, Row, Col, Tag, Space, Tooltip, message } from 'antd';
+import { Table, Button, Modal, Form, Input, Select, Row, Col, Tag, message } from 'antd';
 import { PlusOutlined, EditOutlined, TeamOutlined, SearchOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { counterpartyService } from '../../api/services/counterparty.service';
@@ -34,7 +34,7 @@ const CounterpartyPage: React.FC = () => {
     setIsModalOpen(false); setEditing(null); form.resetFields();
   };
 
-  const items = (data as { data: Counterparty[] })?.data || (data as Counterparty[]) || [];
+  const items = (data as unknown as { data: Counterparty[] })?.data || (data as unknown as Counterparty[]) || [];
 
   const typeOptions = Object.entries(typeLabels).map(([value, label]) => ({ value, label }));
 

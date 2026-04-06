@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { appointmentsService, schedulesService, roomsService, type AppointmentFilters, type CreateAppointmentData, type DoctorListItem } from '../api/services/scheduling.service';
-import type { Appointment, DoctorSchedule, Room } from '../types';
+import type { DoctorSchedule, Room } from '../types';
 
 export const useAppointments = (params?: AppointmentFilters) =>
   useQuery({

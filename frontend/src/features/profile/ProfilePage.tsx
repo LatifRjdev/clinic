@@ -48,7 +48,7 @@ const PersonalInfoCard: React.FC<{
               marginTop: 4, display: 'inline-block', padding: '2px 10px', borderRadius: 99,
               background: 'var(--primary-50)', color: 'var(--primary-600)', fontSize: 12, fontWeight: 600,
             }}>
-              {t(`roles.${user.role}`, user.role)}
+              {String(t(`roles.${user.role}`, user.role))}
             </div>
           </div>
         </div>
@@ -259,7 +259,7 @@ const MyScheduleCard: React.FC<{ userId: string }> = ({ userId }) => {
     existingId?: string;
   }
 
-  const items: DoctorSchedule[] = Array.isArray(schedules) ? schedules : schedules?.data || [];
+  const items: DoctorSchedule[] = Array.isArray(schedules) ? schedules : (schedules as unknown as { data: DoctorSchedule[] })?.data || [];
   const active = items.filter((s) => s.isActive).sort((a, b) => a.dayOfWeek - b.dayOfWeek);
 
   const dayNames: Record<number, string> = {

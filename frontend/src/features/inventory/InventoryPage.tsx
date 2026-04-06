@@ -40,7 +40,7 @@ const InventoryPage: React.FC = () => {
       const expirationDate = values.expirationDate
         ? (values.expirationDate as { format: (f: string) => string }).format('YYYY-MM-DD') : undefined;
       if (editingItem) {
-        await updateItem.mutateAsync({ id: editingItem.id, ...values, expirationDate } as Partial<InventoryItem> & { id: string });
+        await updateItem.mutateAsync({ id: editingItem.id, data: { ...values, expirationDate } as Partial<InventoryItem> });
         message.success(t('common.saved'));
       } else {
         await createItem.mutateAsync({ ...values, expirationDate } as Partial<InventoryItem>);

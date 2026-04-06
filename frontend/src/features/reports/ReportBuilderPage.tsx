@@ -6,7 +6,7 @@ import {
 import {
   BarChartOutlined, DatabaseOutlined, TableOutlined,
   FilterOutlined, GroupOutlined, FileExcelOutlined,
-  FilePdfOutlined, SaveOutlined, ArrowLeftOutlined,
+  FilePdfOutlined, ArrowLeftOutlined,
   ArrowRightOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';

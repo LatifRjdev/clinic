@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Table, Button, Modal, Form, Input, Select, DatePicker, InputNumber, Row, Col, Tag, Tabs, Space, message } from 'antd';
-import { PlusOutlined, NotificationOutlined, GiftOutlined } from '@ant-design/icons';
+import { Table, Button, Modal, Form, Input, Select, DatePicker, InputNumber, Row, Col, Tag, Tabs, message } from 'antd';
+import { PlusOutlined, NotificationOutlined } from '@ant-design/icons';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { marketingService } from '../../api/services/marketing.service';
 import { useTranslation } from 'react-i18next';

@@ -38,8 +38,6 @@ import { useInvoices } from '../../hooks/useBilling';
 import type { Appointment, MedicalRecord, Invoice } from '../../types';
 import { formatCurrency } from '../../utils/format';
 
-const { TabPane } = Tabs;
-
 /* ------------------------------------------------------------------ */
 /*  Stat Card                                                          */
 /* ------------------------------------------------------------------ */

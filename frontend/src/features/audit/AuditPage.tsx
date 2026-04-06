@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Table, Select, DatePicker, Input, Tag, Space, Empty } from 'antd';
+import { Table, Select, DatePicker, Tag, Space, Empty } from 'antd';
 import { AuditOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { auditService } from '../../api/services/audit.service';
-import dayjs from 'dayjs';
 
 const actionColors: Record<string, string> = {
   create: 'green', update: 'blue', delete: 'red', login: 'cyan',

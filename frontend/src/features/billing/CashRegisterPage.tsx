@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Row, Col, Statistic, Tag, Modal, InputNumber, Input, Table, message, Spin, Empty, Divider, Space } from 'antd';
 import {
-  DollarOutlined,
   LockOutlined,
   UnlockOutlined,
   BankOutlined,
@@ -47,7 +46,7 @@ const CashRegisterPage: React.FC = () => {
   const isOpen = register?.status === 'open';
 
   const handleOpen = async () => {
-    await openRegister.mutateAsync({ openingAmount });
+    await openRegister.mutateAsync(openingAmount);
     message.success(t('cashRegister.opened'));
     setOpenModal(false);
     setOpeningAmount(0);
@@ -61,7 +60,7 @@ const CashRegisterPage: React.FC = () => {
     setCloseComment('');
   };
 
-  const expectedAmount = register?.currentAmount || register?.openingAmount || 0;
+  const expectedAmount = register?.closingAmount || register?.openingAmount || 0;
   const closeDifference = actualAmount !== null ? actualAmount - expectedAmount : null;
 
   const handleTransaction = async () => {
@@ -201,7 +200,7 @@ const CashRegisterPage: React.FC = () => {
                 <div className="modern-card-body" style={{ textAlign: 'center' }}>
                   <Statistic
                     title={t('cashRegister.currentAmount')}
-                    value={register.currentAmount || register.openingAmount || 0}
+                    value={register.closingAmount || register.openingAmount || 0}
                     suffix={getCurrencySymbol()}
                     precision={2}
                     valueStyle={{ color: '#10b981', fontWeight: 700 }}
@@ -229,15 +228,15 @@ const CashRegisterPage: React.FC = () => {
                   <Divider style={{ margin: '12px 0' }} />
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                     <span style={{ color: 'var(--gray-500)' }}>{t('billing.cash')}</span>
-                    <span style={{ fontWeight: 600 }}>{formatCurrency(register.cashTotal || 0)}</span>
+                    <span style={{ fontWeight: 600 }}>{formatCurrency(register.cashSales || 0)}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
                     <span style={{ color: 'var(--gray-500)' }}>{t('cashRegister.cardPayments')}</span>
-                    <span style={{ fontWeight: 600 }}>{formatCurrency(register.cardTotal || 0)}</span>
+                    <span style={{ fontWeight: 600 }}>{formatCurrency(register.cardSales || 0)}</span>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                     <span style={{ color: 'var(--gray-500)' }}>{t('cashRegister.transactionsCount')}</span>
-                    <span style={{ fontWeight: 600 }}>{register.transactionsCount || 0}</span>
+                    <span style={{ fontWeight: 600 }}>{(transactions || []).length}</span>
                   </div>
                 </div>
               </div>

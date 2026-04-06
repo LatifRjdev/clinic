@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { Table, Avatar, Button, Space, Tooltip, message } from 'antd';
 import { PlusOutlined, CheckOutlined, CloseOutlined, UserSwitchOutlined, FileTextOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { useTodayAppointments, useChangeAppointmentStatus } from '../../../hooks';
-import { useAuthStore } from '../../../store/authStore';
 import { useNavigate } from 'react-router-dom';
 import type { Appointment } from '../../../types';
 

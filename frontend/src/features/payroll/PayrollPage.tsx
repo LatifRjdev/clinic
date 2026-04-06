@@ -35,7 +35,7 @@ const PayrollPage: React.FC = () => {
   });
 
   const calculateMut = useMutation({
-    mutationFn: (employeeId: string) => payrollService.calculate(employeeId, year, month),
+    mutationFn: (employeeId: string | void) => payrollService.calculate((employeeId as string) || '', year, month),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['payroll'] }); message.success(t('payroll.calculated')); },
   });
 

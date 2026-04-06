@@ -40,8 +40,8 @@ const StaffCardsWidget: React.FC = () => {
   const [roleFilter, setRoleFilter] = useState<string | undefined>(undefined);
   const [viewMode, setViewMode] = useState<string | number>('cards');
 
-  const { data, isLoading } = useSystemUsers({ role: roleFilter, limit: 100 });
-  const { data: departments } = useDepartments();
+  const { data, isLoading } = useSystemUsers({ role: roleFilter, limit: 100 }) as { data: { data?: User[] } | undefined; isLoading: boolean };
+  const { data: departments } = useDepartments() as { data: { id: string; name: string }[] | { data: { id: string; name: string }[] } | undefined };
 
   const users: User[] = data?.data || [];
 

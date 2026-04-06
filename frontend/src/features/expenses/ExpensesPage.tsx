@@ -6,8 +6,6 @@ import { useExpenses, useCreateExpense, useApproveExpense } from '../../hooks/us
 import { formatCurrency } from '../../utils/format';
 import type { Expense } from '../../types';
 
-const categoryKeys = ['rent', 'utilities', 'salary', 'supplies', 'equipment', 'marketing', 'other'] as const;
-
 const ExpensesPage: React.FC = () => {
   const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);

@@ -5,7 +5,7 @@ import {
 } from 'antd';
 import {
   PlusOutlined, EyeOutlined, PrinterOutlined, FileTextOutlined,
-  EditOutlined, CheckOutlined, DollarOutlined, SafetyCertificateOutlined,
+  CheckOutlined, DollarOutlined, SafetyCertificateOutlined,
   HeartOutlined, DeleteOutlined, MedicineBoxOutlined, SendOutlined,
   UploadOutlined, PaperClipOutlined, DownloadOutlined, WarningOutlined,
 } from '@ant-design/icons';
@@ -18,8 +18,7 @@ import SignatureCanvas from '../../components/SignatureCanvas';
 import { icd10Codes } from '../../data/icd10-common';
 import { attachmentsService } from '../../api/services/emr.service';
 import apiClient from '../../api/client';
-import type { MedicalRecord, Prescription, Referral, VitalSigns, Patient, EmrTemplate } from '../../types';
-import dayjs from 'dayjs';
+import type { MedicalRecord, Prescription, Referral, Patient, EmrTemplate } from '../../types';
 
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
@@ -37,10 +36,10 @@ interface PrintOptions {
 }
 
 const printMedicalRecord = ({ record, t, prescriptions }: PrintOptions) => {
-  const p = (record as Record<string, unknown>).patient as {
+  const p = (record as unknown as Record<string, unknown>).patient as {
     firstName?: string; lastName?: string; dateOfBirth?: string; phone?: string;
   } | undefined;
-  const d = (record as Record<string, unknown>).doctor as { firstName?: string; lastName?: string } | undefined;
+  const d = (record as unknown as Record<string, unknown>).doctor as { firstName?: string; lastName?: string } | undefined;
   const patientName = p ? `${p.lastName || ''} ${p.firstName || ''}`.trim() : record.patientId;
   const patientDob = p?.dateOfBirth ? new Date(p.dateOfBirth).toLocaleDateString('ru-RU') : '';
   const patientPhone = p?.phone || '';
@@ -59,10 +58,10 @@ const printMedicalRecord = ({ record, t, prescriptions }: PrintOptions) => {
           </tr></thead>
           <tbody>
             ${prescriptions.map((rx) => `<tr>
-              <td>${(rx as Record<string, unknown>).medication || ''}</td>
-              <td>${(rx as Record<string, unknown>).dosage || ''}</td>
-              <td>${(rx as Record<string, unknown>).frequency || ''}</td>
-              <td>${(rx as Record<string, unknown>).duration || ''}</td>
+              <td>${(rx as unknown as Record<string, unknown>).medication || ''}</td>
+              <td>${(rx as unknown as Record<string, unknown>).dosage || ''}</td>
+              <td>${(rx as unknown as Record<string, unknown>).frequency || ''}</td>
+              <td>${(rx as unknown as Record<string, unknown>).duration || ''}</td>
             </tr>`).join('')}
           </tbody>
         </table>
@@ -127,7 +126,7 @@ const printMedicalRecord = ({ record, t, prescriptions }: PrintOptions) => {
 };
 
 const EmrPage: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { user } = useAuthStore();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -283,11 +282,11 @@ const EmrPage: React.FC = () => {
 
   const handleCreate = async (values: Record<string, unknown>) => {
     try {
-      const payload = {
+      const payload: Record<string, unknown> = {
         ...values,
         doctorId: user?.id,
       };
-      if (!payload.appointmentId) delete payload.appointmentId;
+      if (!payload['appointmentId']) delete payload['appointmentId'];
       await createRecord.mutateAsync(payload as Partial<MedicalRecord>);
       message.success(t('emr.recordCreated'));
       setHasUnsavedChanges(false);
@@ -401,7 +400,7 @@ const EmrPage: React.FC = () => {
       title: t('scheduling.patient'),
       key: 'patient',
       render: (_: unknown, record: MedicalRecord) => {
-        const p = (record as Record<string, unknown>).patient as { firstName?: string; lastName?: string } | undefined;
+        const p = (record as unknown as Record<string, unknown>).patient as { firstName?: string; lastName?: string } | undefined;
         const name = p ? `${p.lastName || ''} ${p.firstName || ''}`.trim() : record.patientId?.slice(0, 8) + '...';
         return (
           <Space>
@@ -1190,7 +1189,7 @@ const EmrPage: React.FC = () => {
               <div style={{ fontSize: 13, color: 'var(--gray-500)' }}>
                 <strong>{t('scheduling.patient')}:</strong>{' '}
                 {(() => {
-                  const p = (recordToSign as Record<string, unknown>).patient as { firstName?: string; lastName?: string } | undefined;
+                  const p = (recordToSign as unknown as Record<string, unknown>).patient as { firstName?: string; lastName?: string } | undefined;
                   return p ? `${p.lastName || ''} ${p.firstName || ''}`.trim() : recordToSign.patientId?.slice(0, 8);
                 })()}
               </div>

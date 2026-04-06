@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Table, Button, Space, Tag, Modal, Tooltip, Avatar, Input,
-  message, Empty, Row, Col,
+  message, Empty,
 } from 'antd';
 import {
   VideoCameraOutlined, PhoneOutlined, AudioOutlined,
   AudioMutedOutlined, DesktopOutlined, MessageOutlined,
-  ClockCircleOutlined, UserOutlined, MedicineBoxOutlined,
-  PlusOutlined, SendOutlined, StopOutlined,
-  VideoCameraAddOutlined, EyeInvisibleOutlined,
+  ClockCircleOutlined, UserOutlined,
+  SendOutlined,
+  EyeInvisibleOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
-import { useVideoSessions, useCreateVideoSession, useStartVideoSession, useEndVideoSession } from '../../hooks/useTelemedicine';
+import { useVideoSessions, useStartVideoSession, useEndVideoSession } from '../../hooks/useTelemedicine';
 import type { VideoSession } from '../../api/services/telemedicine.service';
 
 const TelemedicinePage: React.FC = () => {
@@ -32,7 +32,6 @@ const TelemedicinePage: React.FC = () => {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const { data: sessionsData, isLoading } = useVideoSessions({ page, limit: 20 });
-  const createSession = useCreateVideoSession();
   const startSession = useStartVideoSession();
   const endSession = useEndVideoSession();
 

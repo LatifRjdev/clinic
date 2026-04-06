@@ -13,7 +13,6 @@ import {
   Segmented,
   Avatar,
   Tooltip,
-  Popconfirm,
   message,
 } from 'antd';
 import {
@@ -35,7 +34,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import {
-  useTodayAppointments,
   useAppointments,
   useCreateAppointment,
   useChangeAppointmentStatus,

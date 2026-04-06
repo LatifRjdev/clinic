@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Table, Button, Modal, Form, Select, TimePicker, InputNumber, Switch, Space, Tag, message, Empty, Popconfirm } from 'antd';
+import React, { useState } from 'react';
+import { Table, Button, Modal, Form, Select, TimePicker, Switch, Space, Tag, message, Empty, Popconfirm } from 'antd';
 import { SettingOutlined, PlusOutlined, EditOutlined, DeleteOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useSchedules, useCreateSchedule, useUpdateSchedule } from '../../hooks/useAppointments';
